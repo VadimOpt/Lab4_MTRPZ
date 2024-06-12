@@ -25,7 +25,7 @@ jobs:
       run: npm install
 
     - name: Install chikador
-      run: npm i chikador
+      run: npm install chokidar
 
     - name: Verify Node.js version
       run: node -v
