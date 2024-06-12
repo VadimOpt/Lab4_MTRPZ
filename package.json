@@ -11,7 +11,8 @@
   "description": "",
   "main": "config_parser.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "test": "jest --detectOpenHandles"
   },
   "keywords": [],
   "author": "",
