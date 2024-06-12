@@ -1,0 +1,9 @@
+{
+    "database": {
+      "username": "user",
+      "password": "password"
+    },
+    "logging": {
+      "file": "app.log"
+    }
+  }
