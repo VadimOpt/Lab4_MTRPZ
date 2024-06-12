@@ -11,8 +11,7 @@
   "description": "",
   "main": "config_parser.js",
   "scripts": {
-    "test": "jest",
-    "test": "your-test-command-here"
+    "test": "jest"
   },
   "keywords": [],
   "author": "",
