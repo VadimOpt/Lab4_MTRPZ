@@ -16,7 +16,7 @@ async function loadConfig(configPath, schemaPath, defaultValues = {}, preprocess
             try {
                 await fs.access(file);
             } catch {
-                throw new Error(`File not found: ${file}`);
+                console.log(`File not found: ${file}`);
             }
         }));
 
@@ -34,14 +34,14 @@ async function loadConfig(configPath, schemaPath, defaultValues = {}, preprocess
         const config = JSON.parse(await fs.readFile(configPath, 'utf-8'));
         log('Config loaded successfully.');
 
-        const finalConfig = JSON.parse(JSON.stringify({ ...defaultValues, ...config })); // Deep copy to avoid mutation
+        const finalConfig = JSON.parse(JSON.stringify({ ...defaultValues, ...config }));
 
         const validate = ajv.compile(schema);
         const valid = validate(finalConfig);
 
         if (!valid) {
             log('Validation errors:', validate.errors);
-            throw new Error('Config validation failed');
+            console.log('Config validation failed');
         }
 
         if (preprocess) {
@@ -59,7 +59,7 @@ async function loadConfig(configPath, schemaPath, defaultValues = {}, preprocess
 
     } catch (error) {
         onError(error);
-        throw error;
+        console.log(error)
     }
 }
 

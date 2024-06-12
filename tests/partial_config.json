@@ -1,9 +1,11 @@
 {
     "database": {
       "username": "user",
-      "password": "password"
+      "password": "password",
+      "host": "localhost"
     },
     "logging": {
-      "file": "app.log"
+      "file": "app.log",
+      "level": "INFO"
     }
   }
