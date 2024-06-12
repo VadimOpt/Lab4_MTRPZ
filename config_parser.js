@@ -4,15 +4,33 @@ const path = require('path');
 
 const ajv = new Ajv({ allErrors: true, useDefaults: true });
 
-function loadConfig(configPath, schemaPath, defaultValues = {}, preprocess = null) {
-    try {
-        console.log(`Loading schema from ${schemaPath}...`);
-        const schema = JSON.parse(fs.readFileSync(schemaPath, 'utf-8'));
-        console.log('Schema loaded successfully.');
+let configCache = {};
 
-        console.log(`Loading config from ${configPath}...`);
+function loadConfig(configPath, schemaPath, defaultValues = {}, preprocess = null, options = { cache: true, log: true }) {
+    const log = options.log ? console.log : () => {};
+
+    try {
+        log(`Checking if files exist...`);
+        if (!fs.existsSync(configPath)) {
+            throw new Error(`Config file not found: ${configPath}`);
+        }
+        if (!fs.existsSync(schemaPath)) {
+            throw new Error(`Schema file not found: ${schemaPath}`);
+        }
+
+        const cacheKey = `${configPath}:${schemaPath}`;
+        if (options.cache && configCache[cacheKey]) {
+            log('Returning cached configuration.');
+            return configCache[cacheKey];
+        }
+
+        log(`Loading schema from ${schemaPath}...`);
+        const schema = JSON.parse(fs.readFileSync(schemaPath, 'utf-8'));
+        log('Schema loaded successfully.');
+
+        log(`Loading config from ${configPath}...`);
         const config = JSON.parse(fs.readFileSync(configPath, 'utf-8'));
-        console.log('Config loaded successfully.');
+        log('Config loaded successfully.');
 
         const finalConfig = { ...defaultValues, ...config };
 
@@ -20,16 +38,21 @@ function loadConfig(configPath, schemaPath, defaultValues = {}, preprocess = nul
         const valid = validate(finalConfig);
 
         if (!valid) {
-            console.log('Validation errors:', validate.errors);
+            log('Validation errors:', validate.errors);
             throw new Error('Config validation failed');
         }
 
         if (preprocess) {
-            console.log('Preprocessing configuration...');
+            log('Preprocessing configuration...');
             preprocess(finalConfig);
         }
 
-        console.log('Config validated and loaded successfully.');
+        log('Config validated and loaded successfully.');
+
+        if (options.cache) {
+            configCache[cacheKey] = finalConfig;
+        }
+
         return finalConfig;
 
     } catch (error) {
